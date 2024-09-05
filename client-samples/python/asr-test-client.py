@@ -6,11 +6,13 @@ import traceback
 
 from websocket import create_connection
 
-ws = create_connection("ws://localhost:2700")
+ws = create_connection("ws://127.0.0.1:2800")
 
-wf = wave.open(sys.argv[1], "rb")
+# wf = wave.open(sys.argv[1], "rb")
+wf = wave.open('output.wav', "rb")
+
 ws.send('{ "config" : { "sample_rate" : %d } }' % (wf.getframerate()))
-buffer_size = int(wf.getframerate() * 0.2) # 0.2 seconds of audio
+buffer_size = int(wf.getframerate() * 0.2)  # 0.2 seconds of audio
 
 try:
 
@@ -21,9 +23,9 @@ try:
             break
 
         ws.send_binary(data)
-        print (ws.recv())
+        print(ws.recv())
     ws.send('{"eof" : 1}')
-    print (ws.recv())
+    print(ws.recv())
 
 except Exception as err:
     print(''.join(traceback.format_exception(type(err), err, err.__traceback__)))
